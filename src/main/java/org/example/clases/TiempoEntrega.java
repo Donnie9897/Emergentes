@@ -1,6 +1,6 @@
 package org.example.clases;
 
-public class tiempoEntrega {
+public class TiempoEntrega {
 
     String codigoSuplidor;
     String codigoComponente;
@@ -9,7 +9,16 @@ public class tiempoEntrega {
     double descuento;
     String activo;
 
-    public tiempoEntrega() {
+    public TiempoEntrega(String codigoSuplidor, String codigoComponente, int tiempoEntrega, double precio, double descuento, String activo) {
+        this.codigoSuplidor = codigoSuplidor;
+        this.codigoComponente = codigoComponente;
+        this.tiempoEntrega = tiempoEntrega;
+        this.precio = precio;
+        this.descuento = descuento;
+        this.activo = activo;
+    }
+
+    public TiempoEntrega() {
         this.codigoSuplidor = new String();
         this.codigoComponente = new String();
         this.tiempoEntrega = tiempoEntrega;

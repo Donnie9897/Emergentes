@@ -11,6 +11,14 @@ public class Componente {
     List almacenes;
     int inventarioMinimo;
 
+    public Componente(String codigoComponente, String descripcion, int unidad, List almacenes, int inventarioMinimo) {
+        this.codigoComponente = codigoComponente;
+        this.descripcion = descripcion;
+        this.unidad = unidad;
+        this.almacenes = almacenes;
+        this.inventarioMinimo = inventarioMinimo;
+    }
+
     public Componente() {
         this.codigoComponente = new String();
         this.descripcion = new String();

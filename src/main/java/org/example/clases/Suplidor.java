@@ -17,6 +17,14 @@ public class Suplidor {
         this.direccion = new String();
     }
 
+    public Suplidor(String codigoSuplidor, String nombre, String rnc, String ciudad, String direccion) {
+        this.codigoSuplidor = codigoSuplidor;
+        this.nombre = nombre;
+        this.rnc = rnc;
+        this.ciudad = ciudad;
+        this.direccion = direccion;
+    }
+
     public String getCodigoSuplidor() {
         return codigoSuplidor;
     }
