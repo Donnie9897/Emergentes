@@ -1,6 +1,7 @@
 package org.example.clases;
 
 import java.util.Date;
+import java.util.List;
 
 public class MovimientoInventario {
 
@@ -9,13 +10,15 @@ public class MovimientoInventario {
     String codigoAlmacen;
     String tipoMovimiento;
     Componente componente;
+    List detalle;
     int cantidad;
 
     public MovimientoInventario() {
-        this.codigoMovimiento = codigoMovimiento;
-        this.fechaMovimiento = fechaMovimiento;
-        this.tipoMovimiento = tipoMovimiento;
-        this.componente = componente;
+        this.codigoMovimiento = new String();
+        this.fechaMovimiento = new Date();
+        this.codigoAlmacen = new String();
+        this.tipoMovimiento = new String();
+        this.componente = new Componente();
         this.cantidad = cantidad;
     }
 
@@ -25,6 +28,10 @@ public class MovimientoInventario {
 
     public Date getFechaMovimiento() {
         return fechaMovimiento;
+    }
+
+    public String getCodigoAlmacen() {
+        return codigoAlmacen;
     }
 
     public Componente getComponente() {

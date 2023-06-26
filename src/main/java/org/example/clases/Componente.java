@@ -12,9 +12,11 @@ public class Componente {
     int inventarioMinimo;
 
     public Componente() {
-        this.codigoComponente = codigoComponente;
-        this.descripcion = descripcion;
+        this.codigoComponente = new String();
+        this.descripcion = new String();
+        this.unidad = unidad;
         this.almacenes = almacenes;
+        this.inventarioMinimo  = inventarioMinimo;
     }
 
     public String getCodigoComponente() {
@@ -27,10 +29,6 @@ public class Componente {
 
     public List getAlmacenes() {
         return almacenes;
-    }
-
-    public ArrayList<Suplidor> getProveedores() {
-        return proveedores;
     }
 
     public int getUnidad() {

@@ -2,22 +2,37 @@ package org.example.clases;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class OrdenCompra {
 
-    String proveedor;
+    String numeroOrden;
+    String codigoSuplidor;
+    String ciudadSuplidor;
     Date fechaOrden;
     ArrayList<Componente> componentes;
     double montoTotal;
 
     public OrdenCompra() {
-        this.proveedor = new String();
+        this.numeroOrden = new String();
+        this.codigoSuplidor = codigoSuplidor;
+        this. ciudadSuplidor = new String();
+        this.fechaOrden = new Date();
+        this.componentes = new ArrayList<>();
+        this.montoTotal = montoTotal;
     }
 
-    public String getProveedor() {
-        return proveedor;
+    public String getNumeroOrden() {
+        return numeroOrden;
     }
 
+    public String getCodigoSuplidor() {
+        return codigoSuplidor;
+    }
+
+    public String getCiudadSuplidor() {
+        return ciudadSuplidor;
+    }
 
     public Date getFechaOrden() {
         return fechaOrden;
@@ -31,20 +46,20 @@ public class OrdenCompra {
         return montoTotal;
     }
 
-    public void setProveedor(String proveedor) {
-        this.proveedor = proveedor;
+    public void setNumeroOrden(String numeroOrden) {
+        this.numeroOrden = numeroOrden;
+    }
+
+    public void setCodigoSuplidor(String codigoSuplidor) {
+        this.codigoSuplidor = codigoSuplidor;
+    }
+
+    public void setCiudadSuplidor(String ciudadSuplidor) {
+        this.ciudadSuplidor = ciudadSuplidor;
     }
 
     public void setFechaOrden(Date fechaOrden) {
         this.fechaOrden = fechaOrden;
-    }
-
-    public void setComponentes(ArrayList<Componente> componentes) {
-        this.componentes = componentes;
-    }
-
-    public void setMontoTotal(double montoTotal) {
-        this.montoTotal = montoTotal;
     }
 
     public void agregarComponente(Componente aux){

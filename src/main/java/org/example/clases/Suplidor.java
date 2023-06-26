@@ -10,11 +10,11 @@ public class Suplidor {
     String ciudad;
     String direccion;
     public Suplidor() {
-        this.codigoSuplidor = codigoSuplidor;
-        this.nombre = nombre;
-        this.rnc = rnc;
-        this.ciudad = ciudad;
-        this.direccion = direccion;
+        this.codigoSuplidor = new String();
+        this.nombre = new String();
+        this.rnc = new String();
+        this.ciudad = new String();
+        this.direccion = new String();
     }
 
     public String getCodigoSuplidor() {

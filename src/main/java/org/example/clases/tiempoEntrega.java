@@ -10,12 +10,12 @@ public class tiempoEntrega {
     String activo;
 
     public tiempoEntrega() {
-        this.codigoSuplidor = codigoSuplidor;
-        this.codigoComponente = codigoComponente;
+        this.codigoSuplidor = new String();
+        this.codigoComponente = new String();
         this.tiempoEntrega = tiempoEntrega;
         this.precio = precio;
         this.descuento = descuento;
-        this.activo = activo;
+        this.activo = new String();
     }
 
     public String getCodigoSuplidor() {
