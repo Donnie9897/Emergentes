@@ -18,14 +18,13 @@ import com.mongodb.ServerApiVersion;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import org.example.clases.Proveedor;
 
 public class Main {
     MongoDatabase database;
     MongoClient mongoClient;
 
     public static void main(String[] args) {
-        String connectionString = "mongodb+srv://luisdonaldo:emiliano@cluster0.q8ysetu.mongodb.net/"; //CAMBIAR
+        String connectionString = "mongodb://localhost:27017/"; //CAMBIAR
         ServerApi serverApi = ServerApi.builder()
                 .version(ServerApiVersion.V1)
                 .build();
@@ -35,21 +34,23 @@ public class Main {
                 .build();
         try (MongoClient mongoClient = MongoClients.create(settings)) {
             //CAMBIAR BASE DE DATOS
-            MongoDatabase database = mongoClient.getDatabase("local");
+            MongoDatabase database = mongoClient.getDatabase("ordenAutomatica");
             //Obtener objeto de un Collection
-            MongoCollection<org.bson.Document> collection = database.getCollection("DetalleOrden");
+            MongoCollection<org.bson.Document> collection = database.getCollection("Suplidor");
+            long countDocuments = collection.countDocuments();
+            System.out.println("\n\n\nCantidad Documentos Colección Componente==> " + countDocuments + "\n\n");
         }
     }
 
     private void registrarMovimiento(MovimientoInventario movimiento){
-        MongoCollection<Document> movimientosCollection = database.getCollection("Inventario");
+        MongoCollection<Document> movimientosCollection = database.getCollection("Componente");
 
         // Creación del documento para el nuevo movimiento
         Document nuevoMovimiento = new Document()
-                .append("tipo", movimiento.getTipo())
-                .append("fecha", movimiento.getFecha())
+                .append("tipo", movimiento.getCodigoMovimiento())
+                .append("fecha", movimiento.getFechaMovimiento())
                 .append("almacen", movimiento.getAlmacen())
-                .append("componente", movimiento.getComponente().getId())
+                .append("componente", movimiento.getComponente().getCodigoComponente())
                 .append("cantidad", movimiento.getCantidad());
 
         //ARREGLAR PARA AGREGAR A LA COLECCION
@@ -57,10 +58,10 @@ public class Main {
 
         // Actualizar el balance del componente en la colección "componentes"
         MongoCollection<Document> componentesCollection = database.getCollection("componentes");
-        Bson filtro = Filters.eq("_id", movimiento.getComponente().getId());
+        Bson filtro = Filters.eq("_id", movimiento.getComponente().getCodigoComponente());
         Bson update;
 
-        if (movimiento.getTipo().equals("entrada")) {
+        if (movimiento.getCodigoMovimiento().equals("entrada")) {
             update = Updates.inc("cantidad", movimiento.getCantidad());
         } else {
             update = Updates.inc("cantidad", -movimiento.getCantidad());
@@ -77,10 +78,10 @@ public class Main {
         // Recorrer la coleccion de componentes
         for (Componente componente : componentes) {
             // Verificar si el componente tiene cantidad por debajo del nivel objetivo
-            if (componente.getCantidad() < componente.getInventarioMinimo()) {
+            if (componente.getUnidad() < componente.getInventarioMinimo()) {
 
                 Bson proveedoresFiltro = Filters.and(
-                        Filters.eq("componenteId", componente.getId()),
+                        Filters.eq("componenteId", componente.getCodigoComponente()),
                         Filters.eq("activo", true)
                 );
                 List<Document> proveedoresDocs = proveedoresCollection.find(proveedoresFiltro).into(new ArrayList<>());
@@ -95,7 +96,7 @@ public class Main {
                 OrdenCompra ordenCompra = new OrdenCompra();
                 ordenCompra.setProveedor((String) proveedorSeleccionado.get("nombre"));
                 ordenCompra.setFechaOrden(new Date());
-                componente.setCantidad(componente.getInventarioMinimo() - componente.getCantidad());
+                componente.setUnidad(componente.getInventarioMinimo() - componente.getUnidad());
                 ordenCompra.agregarComponente(componente);
                 ordenesCompra.add(ordenCompra);
             }

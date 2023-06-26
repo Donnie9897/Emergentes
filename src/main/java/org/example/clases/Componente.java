@@ -1,76 +1,53 @@
 package org.example.clases;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Componente {
 
-    String id;
-    String nombre;
-    String almacen;
-    ArrayList<Proveedor> proveedores;
-    double precio;
-    double descuento;
-    int cantidad;
-
+    String codigoComponente;
+    String descripcion;
+    int unidad;
+    List almacenes;
     int inventarioMinimo;
 
     public Componente() {
-        this.id = id;
-        this.nombre = nombre;
-        this.almacen = almacen;
+        this.codigoComponente = codigoComponente;
+        this.descripcion = descripcion;
+        this.almacenes = almacenes;
     }
 
-    public String getId() {
-        return id;
+    public String getCodigoComponente() {
+        return codigoComponente;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getDescripcion() {
+        return descripcion;
     }
 
-    public String getAlmacen() {
-        return almacen;
+    public List getAlmacenes() {
+        return almacenes;
     }
 
-    public ArrayList<Proveedor> getProveedores() {
+    public ArrayList<Suplidor> getProveedores() {
         return proveedores;
     }
 
-    public double getPrecio() {
-        return precio;
-    }
-
-    public double getDescuento() {
-        return descuento;
-    }
-
-    public int getCantidad() {
-        return cantidad;
+    public int getUnidad() {
+        return unidad;
     }
     public int getInventarioMinimo(){return inventarioMinimo;}
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
-    public void setAlmacen(String almacen) {
-        this.almacen = almacen;
+    public void setAlmacenes(List almacenes) {
+        this.almacenes = almacenes;
     }
 
-    public void setProveedores(ArrayList<Proveedor> proveedores) {
-        this.proveedores = proveedores;
-    }
-
-    public void setPrecio(double precio) {
-        this.precio = precio;
-    }
-
-    public void setDescuento(double descuento) {
-        this.descuento = descuento;
-    }
-
-    public void setCantidad(int cantidad) {
-        this.cantidad = cantidad;
+    public void setUnidad(int unidad) {
+        this.unidad = unidad;
     }
 
 

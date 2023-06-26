@@ -4,30 +4,27 @@ import java.util.Date;
 
 public class MovimientoInventario {
 
-    String tipo;
-    Date fecha;
-    String almacen;
+    String codigoMovimiento;
+    Date fechaMovimiento;
+    String codigoAlmacen;
+    String tipoMovimiento;
     Componente componente;
     int cantidad;
 
     public MovimientoInventario() {
-        this.tipo = tipo;
-        this.fecha = fecha;
-        this.almacen = almacen;
+        this.codigoMovimiento = codigoMovimiento;
+        this.fechaMovimiento = fechaMovimiento;
+        this.tipoMovimiento = tipoMovimiento;
         this.componente = componente;
         this.cantidad = cantidad;
     }
 
-    public String getTipo() {
-        return tipo;
+    public String getCodigoMovimiento() {
+        return codigoMovimiento;
     }
 
-    public Date getFecha() {
-        return fecha;
-    }
-
-    public String getAlmacen() {
-        return almacen;
+    public Date getFechaMovimiento() {
+        return fechaMovimiento;
     }
 
     public Componente getComponente() {
