@@ -49,7 +49,7 @@ public class Main {
         Document nuevoMovimiento = new Document()
                 .append("tipo", movimiento.getCodigoMovimiento())
                 .append("fecha", movimiento.getFechaMovimiento())
-                .append("almacen", movimiento.getAlmacen())
+                .append("almacen", movimiento.getCodigoAlmacen())
                 .append("componente", movimiento.getComponente().getCodigoComponente())
                 .append("cantidad", movimiento.getCantidad());
 
@@ -94,7 +94,7 @@ public class Main {
 
                 // Generar la orden de compra para el proveedor seleccionado
                 OrdenCompra ordenCompra = new OrdenCompra();
-                ordenCompra.setProveedor((String) proveedorSeleccionado.get("nombre"));
+                ordenCompra.setNumeroOrden((String) proveedorSeleccionado.get("nombre"));
                 ordenCompra.setFechaOrden(new Date());
                 componente.setUnidad(componente.getInventarioMinimo() - componente.getUnidad());
                 ordenCompra.agregarComponente(componente);
