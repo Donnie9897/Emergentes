@@ -43,13 +43,19 @@ public class Main {
             almacenes.add(3);
             almacenes.add(6000);
 
+            List detalles = new ArrayList<>();
+            detalles.add("532");
+            detalles.add(70);
+            detalles.add(600);
+
             Componente cm = new Componente("532", "NUEVO", 500, almacenes, 300);
             Suplidor sp = new Suplidor("nuevo", "Spl", "873-9384", "Samana", "Calle12, 54");
             TiempoEntrega te = new TiempoEntrega("nuevo", "532", 13, 250, 15, "S");
+            MovimientoInventario mi= new MovimientoInventario("nuevoMov",new Date(),"1","SALIDA",detalles);
 
 
             CRUDModel crudModel = new CRUDModel();
-            crudModel.obtenerTiemposEntrega(database);
+            crudModel.insertarDocumentoMovimiento(database,mi);
 
 
             //  crudModel.generarOrdenCompraAutomatica(database,;

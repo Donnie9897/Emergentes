@@ -139,6 +139,54 @@ public class CRUDModel {
 
     }
 
+    //METODOS PARA LOS MOVIMIENTOS
+
+    public void insertarDocumentoMovimiento(MongoDatabase database, MovimientoInventario mv){
+        MongoCollection<Document> movimiento = database.getCollection("MovimientoInventario");
+
+            // Preparar los documentos y subdocumentos que serán insertados.
+            Document docMovimiento = new Document();
+            Document docDetalles = new Document();
+
+
+            docMovimiento.append("codigoMovimiento", mv.getCodigoMovimiento());
+            docMovimiento.append("fechaMovimiento", mv.getFechaMovimiento());
+            docMovimiento.append("codigoAlmacen", mv.getCodigoAlmacen());
+            docMovimiento.append("tipoMovimiento", mv.getTipoMovimiento());
+
+            HashMap<String, Object> datos = new HashMap<>();
+
+            datos.put("codigoComponente", mv.getDetalle().get(0));
+            datos.put("cantidadMovimiento", mv.getDetalle().get(1));
+            datos.put("unidad", mv.getDetalle().get(2));
+
+            docDetalles.putAll(datos);
+
+            docMovimiento.put("detalle", docDetalles);
+            movimiento.insertOne(docMovimiento);
+
+    }
+
+    public void obtenerMovimientos(MongoDatabase database){
+        MongoCollection<Document> collection = database.getCollection("MovimientoInventario");
+        FindIterable<Document> iterDoc = collection.find();
+        Iterator it = iterDoc.iterator();
+        while (it.hasNext()) {
+            System.out.println(it.next());
+        }
+
+    }
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -158,7 +206,7 @@ public class CRUDModel {
                 .append("tipo", movimiento.getCodigoMovimiento())
                 .append("fecha", movimiento.getFechaMovimiento())
                 .append("almacen", movimiento.getCodigoAlmacen())
-                .append("componente", movimiento.getComponente().getCodigoComponente())
+                .append("componente", movimiento.getDetalle().get(0))
                 .append("cantidad", movimiento.getCantidad());
 
         //ARREGLAR PARA AGREGAR A LA COLECCION
@@ -166,7 +214,7 @@ public class CRUDModel {
 
         // Actualizar el balance del componente en la colección "componentes"
         MongoCollection<Document> componentesCollection = database.getCollection("componentes");
-        Bson filtro = Filters.eq("_id", movimiento.getComponente().getCodigoComponente());
+        Bson filtro = Filters.eq("_id", movimiento.getDetalle().get(0));
         Bson update;
 
         if (movimiento.getCodigoMovimiento().equals("entrada")) {
