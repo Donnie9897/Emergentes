@@ -19,13 +19,16 @@ public class CRUDModel {
 
     //METODOS PARA LOS COMPONENTES
 
-    public void obtenerComponentes(MongoDatabase database){
+    public Iterator obtenerComponentes(MongoDatabase database){
         MongoCollection<Document> collection = database.getCollection("Componente");
         FindIterable<Document> iterDoc = collection.find();
+
         Iterator it = iterDoc.iterator();
         while (it.hasNext()) {
             System.out.println(it.next());
         }
+        return it;
+
 
     }
     public String obtenerComponentePorId(MongoDatabase database, String codigo){
@@ -53,7 +56,7 @@ public class CRUDModel {
             HashMap<String, Object> datosAlmacenes = new HashMap<>();
 
             datosAlmacenes.put("codigoAlmacen", cmp.getAlmacenes().get(0));
-            datosAlmacenes.put("balance", cmp.getAlmacenes().get(1));
+            //datosAlmacenes.put("balance", cmp.getAlmacenes().get(1));
 
             docAlmacenes.putAll(datosAlmacenes);
 
@@ -234,7 +237,7 @@ public class CRUDModel {
         // Recorrer la coleccion de componentes
         for (Componente componente : componentes) {
             // Verificar si el componente tiene cantidad por debajo del nivel objetivo
-            if (componente.getUnidad() < componente.getInventarioMinimo()) {
+            if (componente.getInventarioMinimo() < componente.getInventarioMinimo()) {
 
                 Bson proveedoresFiltro = Filters.and(
                         Filters.eq("componenteId", componente.getCodigoComponente()),
@@ -252,7 +255,6 @@ public class CRUDModel {
                 OrdenCompra ordenCompra = new OrdenCompra();
                 ordenCompra.setNumeroOrden((String) proveedorSeleccionado.get("nombre"));
                 ordenCompra.setFechaOrden(new Date());
-                componente.setUnidad(componente.getInventarioMinimo() - componente.getUnidad());
                 ordenCompra.agregarComponente(componente);
                 ordenesCompra.add(ordenCompra);
             }

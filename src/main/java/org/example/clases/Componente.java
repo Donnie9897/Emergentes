@@ -7,11 +7,12 @@ public class Componente {
 
     String codigoComponente;
     String descripcion;
-    int unidad;
+    String unidad;
     List almacenes;
     int inventarioMinimo;
 
-    public Componente(String codigoComponente, String descripcion, int unidad, List almacenes, int inventarioMinimo) {
+
+    public Componente(String codigoComponente, String descripcion, String unidad, List almacenes, int inventarioMinimo) {
         this.codigoComponente = codigoComponente;
         this.descripcion = descripcion;
         this.unidad = unidad;
@@ -39,7 +40,7 @@ public class Componente {
         return almacenes;
     }
 
-    public int getUnidad() {
+    public String getUnidad() {
         return unidad;
     }
     public int getInventarioMinimo(){return inventarioMinimo;}
@@ -52,7 +53,11 @@ public class Componente {
         this.almacenes = almacenes;
     }
 
-    public void setUnidad(int unidad) {
+    public void setCodigoComponente(String codigoComponente) {
+        this.codigoComponente = codigoComponente;
+    }
+
+    public void setUnidad(String unidad) {
         this.unidad = unidad;
     }
 
