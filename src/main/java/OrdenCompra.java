@@ -6,6 +6,10 @@ public class OrdenCompra extends JFrame {
     private JButton generarOrdenButton;
     private JButton agregarButton;
 
+    public JButton getGenerarOrdenButton() {
+        return generarOrdenButton;
+    }
+
     public static void main(String[] args) {
         OrdenCompra h=new OrdenCompra();
         h.setContentPane(h.panelMain);
