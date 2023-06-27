@@ -48,20 +48,21 @@ public class Main {
             detalles.add(70);
             detalles.add(600);
 
-            Componente cm = new Componente("532", "NUEVO", 500, almacenes, 300);
+            Componente cm = new Componente("532", "NUEVO", "und", almacenes, 300);
             Suplidor sp = new Suplidor("nuevo", "Spl", "873-9384", "Samana", "Calle12, 54");
             TiempoEntrega te = new TiempoEntrega("nuevo", "532", 13, 250, 15, "S");
             MovimientoInventario mi= new MovimientoInventario("nuevoMov",new Date(),"1","SALIDA",detalles);
 
 
             CRUDModel crudModel = new CRUDModel();
-            crudModel.insertarDocumentoMovimiento(database,mi);
+            crudModel.obtenerComponentes(database);
+
 
 
             //  crudModel.generarOrdenCompraAutomatica(database,;
 
 
-        }}
+    }
 
 
-}
+}}
