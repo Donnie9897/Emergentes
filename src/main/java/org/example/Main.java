@@ -23,7 +23,7 @@ public class Main {
     MongoClient mongoClient;
 
     public static void main(String[] args) {
-        String connectionString = "mongodb://localhost:27017/"; //CAMBIAR
+        String connectionString = "mongodb://localhost:27017/";
         ServerApi serverApi = ServerApi.builder()
                 .version(ServerApiVersion.V1)
                 .build();
@@ -36,8 +36,8 @@ public class Main {
             MongoDatabase database = mongoClient.getDatabase("XYZComputers");
             //Obtener objeto de un Collection
             MongoCollection<org.bson.Document> collection = database.getCollection("Suplidor");
-            long countDocuments = collection.countDocuments();
-            System.out.println("\n\n\nCantidad Documentos Colección Suplidor==> " + countDocuments + "\n\n");
+           // long countDocuments = collection.countDocuments();
+            //System.out.println("\n\n\nCantidad Documentos Colección Suplidor==> " + countDocuments + "\n\n");
 
             List almacenes = new ArrayList<>();
             almacenes.add(3);
@@ -53,12 +53,13 @@ public class Main {
             TiempoEntrega te = new TiempoEntrega("nuevo", "532", 13, 250, 15, "S");
             MovimientoInventario mi= new MovimientoInventario("nuevoMov",new Date(),"1","SALIDA",detalles);
 
+            ArrayList<Componente>componentes = new ArrayList<>();
 
             CRUDModel crudModel = new CRUDModel();
             crudModel.insertarDocumentoMovimiento(database,mi);
+            //crudModel.generarOrdenComponenteIndividual(database,"a","10/10/23",componentes);
 
-
-            //  crudModel.generarOrdenCompraAutomatica(database,;
+            // crudModel.generarOrdenCompraAutomatica(database,;
 
 
         }}

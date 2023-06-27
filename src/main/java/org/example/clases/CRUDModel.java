@@ -1,5 +1,6 @@
 package org.example.clases;
 
+import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -8,7 +9,6 @@ import com.mongodb.client.model.Updates;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
-import java.io.IOError;
 import java.io.IOException;
 import java.util.*;
 import static com.mongodb.client.model.Filters.eq;
@@ -262,6 +262,154 @@ public class CRUDModel {
     }
 
 
+    public static void generarOrdenComponenteIndividual(MongoDatabase database, String codigoAlmacen, String fechaRequerida, List<Componente> componentesRequeridos) {
+        List<String> codigosComponente = new ArrayList<>();
+        for (Componente componente : componentesRequeridos) {
+            codigosComponente.add(componente.getCodigoComponente());
+        }
+
+        List<Document> stages = Arrays.asList(
+                new Document("$match", new Document("codigoComponente", new Document("$in", codigosComponente))),
+                new Document("$unwind", "$almacenes"),
+                new Document("$match", new Document("almacenes.codigoAlmacen", codigoAlmacen)),
+                new Document("$lookup", new Document("from", "tiempoentregasuplidors")
+                        .append("localField", "codigoComponente")
+                        .append("foreignField", "codigoComponente")
+                        .append("as", "tiempoEntregaSuplidor")),
+                new Document("$unwind", "$tiempoEntregaSuplidor"),
+                new Document("$project", new Document("_id", 0)
+                        .append("codigoComponente", 1)
+                        .append("descripcion", 1)
+                        .append("unidad", 1)
+                        .append("codigoAlmacen", "$almacenes.codigoAlmacen")
+                        .append("balanceAlmacen", "$almacenes.balanceAlmacen")
+                        .append("codigoSuplidor", "$tiempoEntregaSuplidor.codigoSuplidor")
+                        .append("precio", "$tiempoEntregaSuplidor.precio")
+                        .append("tiempoEntrega", "$tiempoEntregaSuplidor.tiempoEntrega")
+                        .append("descuento", "$tiempoEntregaSuplidor.descuento")
+                        .append("activo", "$tiempoEntregaSuplidor.activo")
+                        .append("requerimientos", componentesRequeridos)
+                ),
+                new Document("$unwind", "$requerimientos"),
+                new Document("$match", new Document("$and", Arrays.asList(
+                        new Document("$expr", new Document("$eq", Arrays.asList("$activo", "S"))),
+                        new Document("$expr", new Document("$eq", Arrays.asList("$requerimientos.codigoComponente", "$codigoComponente")))
+                ))),
+                new Document("$addFields", new Document("fechaBalance0", new Document("$dateAdd",
+                        new Document("startDate", "$$NOW")
+                                .append("unit", "day")
+                                .append("amount", new Document("$subtract", Arrays.asList(
+                                        new Document("$trunc", new Document("$divide",
+                                                Arrays.asList("$balanceAlmacen", "$requerimientos.movimientoPromedio"))
+                                        ),
+                                        1
+                                )))
+                )
+                ).append("fechaRequerida", new Document("$dateFromString",
+                        new Document("dateString", fechaRequerida)
+                ))),
+                new Document("$addFields", new Document("fechaPivote", new Document("$cond",
+                        new Document("if", new Document("$lt",
+                                Arrays.asList("$fechaBalance0", "$fechaRequerida")
+                        ))
+                                .append("then", "$fechaBalance0")
+                                .append("else", "$fechaRequerida")
+                )).append("cantidadComprar", new Document("$round",
+                        Arrays.asList(new Document("$subtract",
+                                Arrays.asList("$requerimientos.cantidadRequerida",
+                                        new Document("$add",
+                                                Arrays.asList("$balanceAlmacen",
+                                                        new Document("$multiply",
+                                                                Arrays.asList(
+                                                                        new Document("$dateDiff",
+                                                                                new Document("startDate", "$$NOW")
+                                                                                        .append("endDate", "$fechaRequerida")
+                                                                                        .append("unit", "day")
+                                                                        ),
+                                                                        new Document("$multiply",
+                                                                                Arrays.asList("$requerimientos.movimientoPromedio", -1)
+                                                                        )
+                                                                )
+                                                        )
+                                                )
+                                        )
+                                )
+                        ), 0)
+                ))),
+                new Document("$addFields", new Document("montoComponente", new Document("$multiply",
+                        Arrays.asList(new Document("$multiply",
+                                Arrays.asList("$precio", "$cantidadComprar")
+                        ), new Document("$subtract",
+                                Arrays.asList(1, "$descuento")
+                        )))
+                )).append("fechaOrden", new Document("$dateSubtract",
+                        new Document("startDate", "$fechaPivote")
+                                .append("amount", "$tiempoEntrega")
+                                .append("unit", "day")
+                )),
+        new Document("$match", new Document("$expr", new Document("$gte",
+                Arrays.asList("$fechaOrden",
+                        new Document("$dateTrunc",
+                                new Document("date", "$$NOW")
+                                        .append("unit", "day")
+                        )
+                )
+        ))),
+                new Document("$sort", new Document("codigoComponente", 1)
+                        .append("montoComponente", 1)),
+                new Document("$group", new Document("_id", "$codigoComponente")
+                        .append("informacionEntrega", new Document("$first",
+                                new Document("codigoComponente", "$codigoComponente")
+                                        .append("descripcion", "$descripcion")
+                                        .append("unidad", "$unidad")
+                                        .append("codigoAlmacen", "$codigoAlmacen")
+                                        .append("balanceAlmacen", "$balanceAlmacen")
+                                        .append("codigoSuplidor", "$codigoSuplidor")
+                                        .append("precio", "$precio")
+                                        .append("tiempoEntrega", "$tiempoEntrega")
+                                        .append("descuento", "$descuento")
+                                        .append("cantidadRequerida", "$requerimientos.cantidadRequerida")
+                        ))
+                        .append("fechaRequerida", new Document("$first", "$fechaRequerida"))
+                        .append("fechaOrden", new Document("$first", "$fechaOrden"))
+                        .append("importe", new Document("$first", "$montoComponente"))
+                        .append("cantidad", new Document("$first", "$cantidadComprar"))
+                ),
+                new Document("$sort", new Document("fechaOrden", 1)),
+                new Document("$group", new Document("_id", new Document("suplidor", "$informacionEntrega.codigoSuplidor"))
+                        .append("componentes", new Document("$addToSet", new Document("codigoAlmacen", "$informacionEntrega.codigoAlmacen")
+                                .append("codigoComponente", "$informacionEntrega.codigoComponente")
+                                .append("cantidadComprada", "$cantidad")
+                                .append("precioCompra", "$informacionEntrega.precio")
+                                .append("unidadCompra", "$informacionEntrega.unidad")
+                                .append("porcientoDescuento", "$informacionEntrega.descuento")
+                                .append("montoDetalle", "$importe")
+                                .append("descripcion", "$informacionEntrega.descripcion")
+                        ))
+                        .append("fechaOrden", new Document("$first", "$fechaOrden"))
+                        .append("montoTotal", new Document("$sum", "$importe"))
+                ),
+                new Document("$lookup", new Document("from", "suplidor")
+                        .append("localField", "_id.suplidor")
+                        .append("foreignField", "codigoSuplidor")
+                        .append("as", "suplidor")
+                ),
+                new Document("$unwind", "$suplidor"),
+                new Document("$project", new Document("_id", 0)
+                        .append("codigoSuplidor", "$_id.suplidor")
+                        .append("nombreSuplidor", "$suplidor.nombre")
+                        .append("ciudadSuplidor", "$suplidor.ciudad")
+                        .append("fechaOrden", "$fechaOrden")
+                        .append("montoTotal", "$montoTotal")
+                        .append("detalle", "$componentes")
+                ),
+                new Document("$sort", new Document("fechaOrden", 1)));
+
+        MongoCollection<Document> componenteCollection = database.getCollection("Componente");
+        AggregateIterable<Document> result = componenteCollection.aggregate(stages);
+        System.out.println(result);
+        //return result.into(new ArrayList<>());
+    }
 
 
 
